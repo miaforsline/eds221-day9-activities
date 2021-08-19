@@ -35,14 +35,23 @@ Identify what is causing the problem in the code below (there's only one thing).
 # Example 1: 
 mack_creek_lengths <- mack_creek_vertebrates %>% 
   clean_names() %>% 
-  select(year:sampledate) %>% 
+  select(year:sampledate) %>% #keep only these columns
   filter(section == "CC") %>% 
-  mutate(across(where(is.character, tolower))) %>% 
+  mutate(across(where(is.character), tolower)) %>% 
   drop_na(species) %>% 
   group_by(species) %>% 
   summarize(mean_length_cm = mean(length1, na.rm = TRUE),
             sd_length_cm = sd(length1, na.rm = TRUE)) %>% 
   ungroup()
+mack_creek_lengths
+
+#Reprex: 
+
+library(tidyverse)
+library(palmerpenguins)
+df <- penguins %>% 
+  mutate(across(where(is.character), tolower))
+df
 ```
 
 ### reprex 2
@@ -51,14 +60,32 @@ Identify what is causing the problem in the code below (there's only one thing).
 
 ```{r}
 # Example 2:
-mack_creek_vertebrates %>% 
+ex_2 <- mack_creek_vertebrates %>% 
   clean_names() %>% 
   filter(species == "ONCL") %>% 
   ggplot(aes(x = length1, y = weight)) +
-         geom_point(aes(shape = 12), color = "purple") +
+         geom_point(color = "purple", shape = 12) +
          theme_minimal() +
          labs(x = "Cutthroat trout length (cm)",
               y = "Weight (g)")
+ex_2
+
+#Reprex 2: 
+
+library(tidyverse)
+
+df <- tribble(
+  ~name, ~burritos_consumed, ~siblings,
+  "Mia", 2, 3,
+  "Paloma", 3, 4.4,
+  "Halina", 10, 5.1,
+  "Joe", 21, 1
+)
+
+ggplot(data = df, aes(x = burritos_consumed, y = siblings))+
+  geom_point(color = "purple", shape = 12) 
+#color and shape should not be in aes() unless they are related to a variable 
+
 ```
 
 ## End
